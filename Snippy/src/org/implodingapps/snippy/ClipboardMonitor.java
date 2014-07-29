@@ -1,12 +1,15 @@
 package org.implodingapps.snippy;
 
 import android.app.Service;
+import android.content.ClipboardManager;
+import android.content.ClipboardManager.OnPrimaryClipChangedListener;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-public class ClipboardMonitor extends Service {
-
+public class ClipboardMonitor extends Service 
+{
+	
 	@Override
 	public IBinder onBind(Intent arg0) 
 	{
@@ -21,6 +24,20 @@ public class ClipboardMonitor extends Service {
 		//Note: Will only ever be called once
 		
 		//PUT YOUR CODE HERE ABHI
+		//Gets a Clipboard Manager Object
+		final ClipboardManager clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+	
+		//Registers a OnPrimaryClipChanged Listener
+		clippy.addPrimaryClipChangedListener(new OnPrimaryClipChangedListener()
+				{
+					@Override
+					public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
+					{
+						Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
+						
+					}
+				}
+		);
 		
 		//Add a toast notification if the contents of the clipboard are changed
 	}
