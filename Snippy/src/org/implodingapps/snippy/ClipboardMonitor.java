@@ -15,19 +15,11 @@ import android.util.Log;
 @SuppressLint("NewApi") //TODO: Fix this
 public class ClipboardMonitor extends Service 
 {
-	Resources res = getResources();
-	NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-	final ClipboardManager clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+	private Resources res;
+	private ClipboardManager clippy;
+	private NotificationManager nm;
 	
-	OnPrimaryClipChangedListener cclistener = new OnPrimaryClipChangedListener()
-	{
-		@Override
-		public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
-		{
-			/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
-			/*DeBUG*/
-		}
-	};
+	private OnPrimaryClipChangedListener cclistener;
 	
 	final int NOTIF_ID = 1;
 	
@@ -44,6 +36,21 @@ public class ClipboardMonitor extends Service
 	{
 		/*DeBUG*/
 		Log.d("Snippy", "ClipboardMonitor service started");
+		
+		//Instantiate Variables
+		res = getResources();
+		nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+		
+		cclistener = new OnPrimaryClipChangedListener()
+		{
+			@Override
+			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
+			{
+				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
+				/*DeBUG*/
+			}
+		};
 		
 		//Start a persistent notification
 		Notification.Builder nbuilder = new Notification.Builder(this);
