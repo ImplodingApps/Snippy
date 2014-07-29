@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
     	// use this to start and trigger a service
     	Intent i= new Intent(this, ClipboardMonitor.class);
     	// potentially add data to the intent
-    	i.putExtra("KEY1", "Value to be used by the service");
+    	//i.putExtra("KEY1", "Value to be used by the service");
     	this.startService(i);
     }
     

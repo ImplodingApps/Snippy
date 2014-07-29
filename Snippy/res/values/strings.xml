@@ -5,5 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_view_history">ViewHistory</string>
+    <string name="Clipboard_Monitor_notification_title">Snippy Clipboard Service...</string>
+    <string name="Clipboard_Monitor_notification_text">...is watching your clipboard.</string>
 
 </resources>
