@@ -17,7 +17,7 @@ public class ClipboardMonitor extends Service
 {
 	private Resources res;
 	private ClipboardManager clippy;
-	private NotificationManager nm;
+	//private NotificationManager nm;
 	
 	private OnPrimaryClipChangedListener cclistener;
 	
@@ -39,7 +39,7 @@ public class ClipboardMonitor extends Service
 		
 		//Instantiate Variables
 		res = getResources();
-		nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		//nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		
 		cclistener = new OnPrimaryClipChangedListener()
@@ -58,14 +58,16 @@ public class ClipboardMonitor extends Service
 		nbuilder
 			.setPriority(-2) //TODO: Build in safeties for ICS or abandon it
 			.setOngoing(true)
-			.setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.attach)) //TODO: Use actual final icons
+			.setSmallIcon(R.drawable.ic_launcher)//TODO: get real icon, this is just to fix a really weird bug
+			.setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.tumblbeast)) //TODO: Use actual final icons
 			.setContentTitle(res.getString(R.string.Clipboard_Monitor_notification_title))
             .setContentText(res.getString(R.string.Clipboard_Monitor_notification_text));
 
-		Notification n = nbuilder.build();
-		//TODO: Build in safeties for ICS or abandon it
-		nm.notify(NOTIF_ID, n);
-	
+		Notification n = nbuilder.build(); //TODO: Build in safeties for ICS or abandon it
+
+		//nm.notify(NOTIF_ID, n);
+		startForeground(NOTIF_ID, n);
+		
 		//Registers a OnPrimaryClipChanged Listener
 		clippy.addPrimaryClipChangedListener(cclistener);
 		
@@ -85,7 +87,9 @@ public class ClipboardMonitor extends Service
 		clippy.removePrimaryClipChangedListener(cclistener);
 		Log.d("Snippy", "ClipboardMonitor service ended");
 		
-		nm.cancel(NOTIF_ID);
+		//nm.cancel(NOTIF_ID);
+		stopForeground(true);
+		
         // TODO Auto-generated method stub
         super.onDestroy();
     }
