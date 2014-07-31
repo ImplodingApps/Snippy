@@ -51,6 +51,7 @@ public class ClipboardMonitor extends Service
 				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
 				/*DeBUG*/
 				Singleton.getInstance();
+				//Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
 				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
 			}
 		};

@@ -1,7 +1,9 @@
 package org.implodingapps.snippy;
 
 import java.util.Date;
+
 import android.content.ClipData;
+import android.webkit.MimeTypeMap;
 
 public class Snippet 
 {	
@@ -23,6 +25,13 @@ public class Snippet
 	public ClipData getRawClip()
 	{
 		return snippet;
+	}
+	
+	public MimeTypeMap returnText()
+	{
+		
+		return null;
+	
 	}
 	
 	/* TODO: Make parsed ClipData methods:

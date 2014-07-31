@@ -1,6 +1,6 @@
 package org.implodingapps.snippy;
 
-//Shamelessly stolen from Stack Overflow: https://gist.github.com/Akayh/5566992
+//Shamelessly stolen from Stack Overflow: https://gist.github.com/Akayh/5566992//... ;(
 import java.util.ArrayList;
 
 public class Singleton 
