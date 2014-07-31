@@ -38,6 +38,13 @@ public class Snippet
 		return snippet;
 	}
 	
+<<<<<<< HEAD
+=======
+	public MimeTypeMap returnMimeType()
+	{
+		
+		return null;
+>>>>>>> 3c476fab5f4b8b42811439e742214eed119826de
 	
 	public CharSequence coerceToText(Context context) 
 	{
