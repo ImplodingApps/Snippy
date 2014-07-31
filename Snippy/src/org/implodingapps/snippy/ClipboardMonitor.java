@@ -49,10 +49,8 @@ public class ClipboardMonitor extends Service
 			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
 			{
 				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
-				String primaryClip = clippy.getPrimaryClip();
 				/*DeBUG*/
 				Singleton.getInstance();
-				//Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
 				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
 			}
 		};
