@@ -27,7 +27,7 @@ public class Snippet
 		return snippet;
 	}
 	
-	public MimeTypeMap returnText()
+	public MimeTypeMap returnMimeType()
 	{
 		
 		return null;
