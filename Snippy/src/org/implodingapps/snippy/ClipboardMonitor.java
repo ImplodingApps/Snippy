@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ClipboardManager.OnPrimaryClipChangedListener;
 import android.content.Intent;
@@ -49,6 +50,8 @@ public class ClipboardMonitor extends Service
 			{
 				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
 				/*DeBUG*/
+				Singleton.getInstance();
+				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
 			}
 		};
 		
@@ -85,7 +88,9 @@ public class ClipboardMonitor extends Service
     public void onDestroy() 
 	{
 		clippy.removePrimaryClipChangedListener(cclistener);
-		Log.d("Snippy", "ClipboardMonitor service ended");
+		
+		/*DeBUG*/ Log.d("Snippy", "ClipboardMonitor service ended");
+		/*DeBUG*/ Log.d("Snippy", "Dump: " + Singleton.snippets);
 		
 		//nm.cancel(NOTIF_ID);
 		stopForeground(true);

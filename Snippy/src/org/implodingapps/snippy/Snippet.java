@@ -3,12 +3,12 @@ package org.implodingapps.snippy;
 import java.util.Date;
 import android.content.ClipData;
 
-public class Snippets 
+public class Snippet 
 {	
 	public long timeOfCopy;
 	public ClipData snippet;
 	
-	Snippets(long timeOfCopy, ClipData snippet)
+	Snippet(long timeOfCopy, ClipData snippet)
 	{
 		this.timeOfCopy = timeOfCopy;
 		this.snippet = snippet;
