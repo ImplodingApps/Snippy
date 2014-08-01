@@ -47,13 +47,15 @@ public class Snippet
 	public CharSequence coerceToText(Context context) 
 	{
 	    // If this Item has an explicit textual value, simply return that.
-	    CharSequence text = getText();
+	    CharSequence text = (CharSequence) snippet;
 	    if (text!= null) 
 	    {
 	        return text;
 	    }
 
 	    // If this Item has a URI value, try using that.
+	    //Uri uri = (Uri) snippet;
+	    //Uri uri = 
 	    Uri uri = getUri();
 	    if (uri != null) {
 
@@ -110,6 +112,7 @@ public class Snippet
 	    // Shouldn't get here, but just in case...
 	    return "";
 	}
+
 	/* TODO: Make parsed ClipData methods:
 	 * One that gets the MIME type
 	 * One to return text
