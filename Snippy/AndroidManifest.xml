@@ -7,6 +7,9 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
+    
+    <uses-permission 
+        android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -30,5 +33,5 @@
             android:icon="@drawable/clippy">
         </service>
     </application>
-
+    
 </manifest>

@@ -9,18 +9,36 @@ import android.content.ClipboardManager;
 import android.content.ClipboardManager.OnPrimaryClipChangedListener;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 @SuppressLint("NewApi") //TODO: Fix this
 public class ClipboardMonitor extends Service 
 {
 	private Resources res;
-	private ClipboardManager clippy;
-	//private NotificationManager nm;
+	private WindowManager windowManager;
 	
+	private ClipboardManager clippy;	
 	private OnPrimaryClipChangedListener cclistener;
+	
+	private ImageView trigger;
+	private WindowManager.LayoutParams params;
 	
 	final int NOTIF_ID = 1;
 	
@@ -34,26 +52,14 @@ public class ClipboardMonitor extends Service
 	@SuppressLint("NewApi") //TODO: Fix this
 	@Override
 	public void onCreate() //Note: Will only ever be called once
-	{
-		/*DeBUG*/
-		Log.d("Snippy", "ClipboardMonitor service started");
-		
+	{	
 		//Instantiate Variables
 		res = getResources();
-		//nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 		
-		cclistener = new OnPrimaryClipChangedListener()
-		{
-			@Override
-			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
-			{
-				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
-				/*DeBUG*/
-				Singleton.getInstance();
-				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
-			}
-		};
+		//Initialize Singleton
+		Singleton.getInstance();
 		
 		//Start a persistent notification
 		Notification.Builder nbuilder = new Notification.Builder(this);
@@ -68,13 +74,118 @@ public class ClipboardMonitor extends Service
 
 		Notification n = nbuilder.build(); //TODO: Build in safeties for ICS or abandon it
 
-		//nm.notify(NOTIF_ID, n);
 		startForeground(NOTIF_ID, n);
 		
-		//Registers a OnPrimaryClipChanged Listener
+		//Start and instantiate the Clipboard Listener
+		cclistener = new OnPrimaryClipChangedListener()
+		{
+			@Override
+			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
+			{
+				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
+				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
+			}
+		};
+		
 		clippy.addPrimaryClipChangedListener(cclistener);
 		
+		//Create the floating paste mechanism trigger thing (Shamelessly stolen from http://stackoverflow.com/questions/19846541/what-is-windowmanager-in-android )
+		params = new WindowManager.LayoutParams(
+				WindowManager.LayoutParams.WRAP_CONTENT,
+				WindowManager.LayoutParams.WRAP_CONTENT,
+				WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+				WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+				PixelFormat.TRANSLUCENT);
+
+		params.gravity = Gravity.TOP | Gravity.LEFT;
+		params.x = 0;
+		params.y = 0;
+		
+		trigger = new ImageView(this);
+		trigger.setImageBitmap(createTriggerBitmap(1));
+
+		
+		windowManager.addView(trigger, params);
+		
+		try {
+			trigger.setOnTouchListener(new View.OnTouchListener() {
+				private WindowManager.LayoutParams paramsF = params;
+				private int initialX;
+				private int initialY;
+				private float initialTouchX;
+				private float initialTouchY;
+
+				@Override public boolean onTouch(View v, MotionEvent event) {
+					switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+
+						// Get current time in nano seconds.
+
+//						initialX = paramsF.x;
+//						initialY = paramsF.y;
+//						initialTouchX = event.getRawX();
+//						initialTouchY = event.getRawY();
+						
+						trigger.setImageBitmap(createTriggerBitmap(5));
+						break;
+					case MotionEvent.ACTION_UP:
+						//Record the position the user released the screen
+						
+						
+						//Restore to normal UI
+						trigger.setImageBitmap(createTriggerBitmap(1));
+						break;
+					case MotionEvent.ACTION_MOVE:
+//						paramsF.x = initialX + (int) (event.getRawX() - initialTouchX);
+//						paramsF.y = initialY + (int) (event.getRawY() - initialTouchY);
+						windowManager.updateViewLayout(trigger, paramsF);
+						break;
+					}
+					return false;
+				}
+			});
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		//Add a toast notification if the contents of the clipboard are changed
+	}
+	
+	public Bitmap createTriggerBitmap(int position)
+	{
+		int statusBarHeight = (int) Math.ceil(25 * this.getResources().getDisplayMetrics().density);
+		int sideBarHeight = (int) Math.ceil(500 * this.getResources().getDisplayMetrics().density);
+		
+		Bitmap original = BitmapFactory.decodeResource(res,R.drawable.transparent);
+		Bitmap resized = null;
+		
+		params.x = 0;
+		if(position == 1 || position == 3)
+			params.gravity = Gravity.TOP | Gravity.LEFT;
+		if(position == 2 || position == 4)
+			params.gravity = Gravity.TOP | Gravity.RIGHT;
+		if(position == 1 || position == 2)
+		{
+			params.y = 0;
+			resized = Bitmap.createScaledBitmap(original, statusBarHeight, statusBarHeight, true);
+		}
+		if(position == 3 || position == 4)
+		{
+			params.y = statusBarHeight;
+			resized = Bitmap.createScaledBitmap(original, statusBarHeight, sideBarHeight, true);
+		}
+		if(position == 5)
+		{
+			original = BitmapFactory.decodeResource(res,R.drawable.clippy);
+			params.gravity = Gravity.TOP | Gravity.LEFT;
+			params.y = 0;
+			resized = Bitmap.createScaledBitmap(original, 1200, 1200, true);
+		}
+		
+		//Bitmap resized = Bitmap.createScaledBitmap(original, statusBarHeight, statusBarHeight, true);
+		
+		Log.i("Snippy", statusBarHeight + "");
+		return resized;
 	}
 	
 	@Override
@@ -89,13 +200,12 @@ public class ClipboardMonitor extends Service
 	{
 		clippy.removePrimaryClipChangedListener(cclistener);
 		
-		/*DeBUG*/ Log.d("Snippy", "ClipboardMonitor service ended");
 		/*DeBUG*/ Log.d("Snippy", "Dump: " + Singleton.snippets);
 		
-		//nm.cancel(NOTIF_ID);
+		if (trigger != null) windowManager.removeView(trigger);
+		
 		stopForeground(true);
 		
-        // TODO Auto-generated method stub
         super.onDestroy();
     }
 
