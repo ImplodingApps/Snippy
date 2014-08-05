@@ -107,7 +107,8 @@ public class Snippet
 
 	    // Finally, if all we have is an Intent, then we can just turn that
 	    // into text.  Not the most user-friendly thing, but it's something.
-	    Intent intent = getIntent();
+	    ClipData.Item intent_item = snippet.getItemAt(0);
+	    Intent intent = intent_item.getIntent();
 	    if (intent != null) {
 	        return intent.toUri(Intent.URI_INTENT_SCHEME);
 	    }
