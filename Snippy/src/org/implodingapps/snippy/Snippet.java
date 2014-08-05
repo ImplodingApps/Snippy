@@ -55,13 +55,12 @@ public class Snippet
 	    }
 
 	    // If this Item has a URI value, try using that.
-	    //Uri uri = (Uri) snippet;
-	    //Uri uri = 
-	    ClipData.Item item = snippet.getItemAt(0);
+	    ClipData.Item item = snippet.getItemAt(0);// Gets the first item from the clipboard data
 	    Uri uri = item.getUri();
 	    
 	    
-	    if (uri != null) {
+	    if (uri != null) 
+	    {
 
 	        // First see if the URI can be opened as a plain text stream
 	        // (of any sub-type).  If so, this is the best textual
