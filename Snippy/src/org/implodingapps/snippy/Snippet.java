@@ -55,7 +55,7 @@ public class Snippet
 
 	    // If this Item has a URI value, try using that.
 	    //Uri uri = (Uri) snippet;
-	    //Uri uri = 
+	    Uri uri = 
 	    Uri uri = getUri();
 	    if (uri != null) {
 
