@@ -184,5 +184,4 @@ public class Snippet
 //	        // Updates the current note with the retrieved title and text.
 //	        updateNote(text, title);
 //	    }
-	}
 }
