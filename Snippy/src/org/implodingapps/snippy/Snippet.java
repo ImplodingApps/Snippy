@@ -49,70 +49,70 @@ public class Snippet
 	public CharSequence coerceToText(Context context) 
 	{
 	    // If this Item has an explicit textual value, simply return that.
-	    CharSequence text = (CharSequence) snippet;
-	    if (text!= null) 
-	    {
-	        return text;
-	    }
+//	    CharSequence text = (CharSequence) snippet;
+//	    if (text!= null) 
+//	    {
+//	        return text;
+//	    }
 
 	    // If this Item has a URI value, try using that.
-	    ClipData.Item item = snippet.getItemAt(0);// Gets the first item from the clipboard data
-	    Uri uri = item.getUri();
-	    
-	    
-	    if (uri != null) 
-	    {
-
-	        // First see if the URI can be opened as a plain text stream
-	        // (of any sub-type).  If so, this is the best textual
-	        // representation for it.
-	        FileInputStream stream = null;
-	        try {
-	            // Ask for a stream of the desired type.
-	            AssetFileDescriptor descr = context.getContentResolver()
-	                    .openTypedAssetFileDescriptor(uri, "text/*", null);
-	            stream = descr.createInputStream();
-	            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-
-	            // Got it...  copy the stream into a local string and return it.
-	            StringBuilder builder = new StringBuilder(128);
-	            char[] buffer = new char[8192];
-	            int len;
-	            while ((len=reader.read(buffer)) > 0) {
-	                builder.append(buffer, 0, len);
-	            }
-	            return builder.toString();
-
-	        } catch (FileNotFoundException e) {
-	            // Unable to open content URI as text...  not really an
-	            // error, just something to ignore.
-
-	        } catch (IOException e) {
-	            // Something bad has happened.
-	            Log.w("ClippedData", "Failure loading text", e);
-	            return e.toString();
-
-	        } finally {
-	            if (stream != null) {
-	                try {
-	                    stream.close();
-	                } catch (IOException e) {
-	                }
-	            }
-	        }
-
-	        // If we couldn't open the URI as a stream, then the URI itself
-	        // probably serves fairly well as a textual representation.
-	        return uri.toString();
-	    }
-
-	    // Finally, if all we have is an Intent, then we can just turn that
-	    // into text.  Not the most user-friendly thing, but it's something.
-	    ClipData.Item intent_item = snippet.getItemAt(0);
-	    Intent intent = intent_item.getIntent();
-	    if (intent != null) {
-	        return intent.toUri(Intent.URI_INTENT_SCHEME);
-	    }
+//	    ClipData.Item item = snippet.getItemAt(0);// Gets the first item from the clipboard data
+//	    Uri uri = item.getUri();
+//	    
+//	    
+//	    if (uri != null) 
+//	    {
+//
+//	        // First see if the URI can be opened as a plain text stream
+//	        // (of any sub-type).  If so, this is the best textual
+//	        // representation for it.
+//	        FileInputStream stream = null;
+//	        try {
+//	            // Ask for a stream of the desired type.
+//	            AssetFileDescriptor descr = context.getContentResolver()
+//	                    .openTypedAssetFileDescriptor(uri, "text/*", null);
+//	            stream = descr.createInputStream();
+//	            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+//
+//	            // Got it...  copy the stream into a local string and return it.
+//	            StringBuilder builder = new StringBuilder(128);
+//	            char[] buffer = new char[8192];
+//	            int len;
+//	            while ((len=reader.read(buffer)) > 0) {
+//	                builder.append(buffer, 0, len);
+//	            }
+//	            return builder.toString();
+//
+//	        } catch (FileNotFoundException e) {
+//	            // Unable to open content URI as text...  not really an
+//	            // error, just something to ignore.
+//
+//	        } catch (IOException e) {
+//	            // Something bad has happened.
+//	            Log.w("ClippedData", "Failure loading text", e);
+//	            return e.toString();
+//
+//	        } finally {
+//	            if (stream != null) {
+//	                try {
+//	                    stream.close();
+//	                } catch (IOException e) {
+//	                }
+//	            }
+//	        }
+//
+//	        // If we couldn't open the URI as a stream, then the URI itself
+//	        // probably serves fairly well as a textual representation.
+//	        return uri.toString();
+//	    }
+//
+//	    // Finally, if all we have is an Intent, then we can just turn that
+//	    // into text.  Not the most user-friendly thing, but it's something.
+//	    ClipData.Item intent_item = snippet.getItemAt(0);
+//	    Intent intent = intent_item.getIntent();
+//	    if (intent != null) {
+//	        return intent.toUri(Intent.URI_INTENT_SCHEME);
+//	    }
 
 	    // Shouldn't get here, but just in case...
 	    return "";

@@ -41,6 +41,7 @@ public class ClipboardMonitor extends Service
 	private WindowManager.LayoutParams params;
 	
 	final int NOTIF_ID = 1;
+	int triggerPosition;
 	
 	@Override
 	public IBinder onBind(Intent arg0) 
@@ -53,6 +54,9 @@ public class ClipboardMonitor extends Service
 	@Override
 	public void onCreate() //Note: Will only ever be called once
 	{	
+		//TODO: Populate variables from settings 
+		triggerPosition = 1;
+		
 		//Instantiate Variables
 		res = getResources();
 		clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -103,7 +107,7 @@ public class ClipboardMonitor extends Service
 		params.y = 0;
 		
 		trigger = new ImageView(this);
-		trigger.setImageBitmap(createTriggerBitmap(1));
+		trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
 
 		
 		windowManager.addView(trigger, params);
@@ -134,7 +138,7 @@ public class ClipboardMonitor extends Service
 						
 						
 						//Restore to normal UI
-						trigger.setImageBitmap(createTriggerBitmap(1));
+						trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
 						break;
 					case MotionEvent.ACTION_MOVE:
 //						paramsF.x = initialX + (int) (event.getRawX() - initialTouchX);
