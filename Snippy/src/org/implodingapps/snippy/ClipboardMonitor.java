@@ -65,6 +65,29 @@ public class ClipboardMonitor extends Service
 		Singleton.getInstance();
 		
 		//Start a persistent notification
+		startOngoingNotification();
+		
+		//Start and instantiate the Clipboard Listener
+		cclistener = new OnPrimaryClipChangedListener()
+		{
+			@Override
+			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
+			{
+				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
+				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
+				/*DeBUG*/Log.i("Snippy", "" + Singleton.snippets.get(Singleton.snippets.size() - 1).parsedText);
+			}
+		};
+		
+		clippy.addPrimaryClipChangedListener(cclistener);
+		
+		//Create the floating paste mechanism trigger thing (Shamelessly stolen from http://stackoverflow.com/questions/19846541/what-is-windowmanager-in-android )
+		createTrigger();
+		
+		//Add a toast notification if the contents of the clipboard are changed
+	}
+	public void startOngoingNotification()
+	{
 		Notification.Builder nbuilder = new Notification.Builder(this);
 		
 		nbuilder
@@ -78,22 +101,10 @@ public class ClipboardMonitor extends Service
 		Notification n = nbuilder.build(); //TODO: Build in safeties for ICS or abandon it
 
 		startForeground(NOTIF_ID, n);
-		
-		//Start and instantiate the Clipboard Listener
-		cclistener = new OnPrimaryClipChangedListener()
-		{
-			@Override
-			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
-			{
-				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
-				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
-				Log.i("Snippy", "" + Singleton.snippets.get(Singleton.snippets.size() - 1).parsedText);
-			}
-		};
-		
-		clippy.addPrimaryClipChangedListener(cclistener);
-		
-		//Create the floating paste mechanism trigger thing (Shamelessly stolen from http://stackoverflow.com/questions/19846541/what-is-windowmanager-in-android )
+	}
+	
+	public void createTrigger()
+	{
 		params = new WindowManager.LayoutParams(
 				WindowManager.LayoutParams.WRAP_CONTENT,
 				WindowManager.LayoutParams.WRAP_CONTENT,
@@ -151,8 +162,6 @@ public class ClipboardMonitor extends Service
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
-		//Add a toast notification if the contents of the clipboard are changed
 	}
 	
 	public Bitmap createTriggerBitmap(int position)
