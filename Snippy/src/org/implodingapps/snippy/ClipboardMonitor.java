@@ -1,7 +1,6 @@
 package org.implodingapps.snippy;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -13,23 +12,15 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
-import android.nfc.Tag;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 @SuppressLint("NewApi") //TODO: Fix this
 public class ClipboardMonitor extends Service 
@@ -42,6 +33,8 @@ public class ClipboardMonitor extends Service
 	
 	private ImageView trigger;
 	private WindowManager.LayoutParams params;
+	
+	private TagCloudView mTagCloudView;
 	
 	final int NOTIF_ID = 1;
 	int triggerPosition;
@@ -57,7 +50,7 @@ public class ClipboardMonitor extends Service
 			{
 				element.substring(0, 17).concat("...");
 			}
-			snippet_list.add(new Tag(element, (int) (i / 3), i);
+			snippet_list.add(new Tag(element, (int) (i / 3), i));
 		}
 		return snippet_list;
 	}
@@ -160,13 +153,15 @@ public class ClipboardMonitor extends Service
 //						initialTouchX = event.getRawX();
 //						initialTouchY = event.getRawY();
 						
-						trigger.setImageBitmap(createTriggerBitmap(5));
+						//trigger.setImageBitmap(createTriggerBitmap(5));
+						createWordCloud(true);
 						break;
 					case MotionEvent.ACTION_UP:
 						//Record the position the user released the screen
 						
 						
 						//Restore to normal UI
+						createWordCloud(false);
 						trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
 						break;
 					case MotionEvent.ACTION_MOVE:
@@ -181,6 +176,36 @@ public class ClipboardMonitor extends Service
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
+	}
+	
+	@SuppressWarnings("deprecation") //I don't care; don't talk to me.
+	public void createWordCloud(boolean add)
+	{
+		if(add)
+		{
+			params = new WindowManager.LayoutParams(
+					WindowManager.LayoutParams.WRAP_CONTENT,
+					WindowManager.LayoutParams.WRAP_CONTENT,
+					WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
+					WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+					PixelFormat.TRANSLUCENT);
+			
+			//Step0: to get a full-screen View:
+			//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//			WindowManager.LayoutParams.FLAG_FULLSCREEN);
+					
+			//Step1: get screen resolution:
+			Display display = windowManager.getDefaultDisplay();
+			int width = display.getWidth();
+			int height = display.getHeight();
+					
+			mTagCloudView = new TagCloudView(this, width, height, createTags() ); //passing current context
+			
+			windowManager.addView(mTagCloudView, params);
+		}
+		
+		if(!add){ windowManager.removeView(mTagCloudView);}
 	}
 	
 	public Bitmap createTriggerBitmap(int position)

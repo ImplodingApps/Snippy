@@ -5,22 +5,13 @@ import java.util.ArrayList;
 
 public class Singleton 
 {
-	private static Singleton mInstance = null;
+	public static Singleton mInstance = new Singleton();
 	
 	public static ArrayList<Snippet> snippets;
 	
 	private Singleton()
 	{
 		snippets = new ArrayList<Snippet>();
-	}
-	
-	static Singleton getInstance()
-	{
-		if(mInstance == null)
-		{
-			mInstance = new Singleton();
-		}
-		return mInstance;
 	}
 	
 	public void addSnippet(Snippet s)
