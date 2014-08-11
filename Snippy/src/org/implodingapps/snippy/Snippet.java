@@ -29,7 +29,7 @@ public class Snippet
 		this.timeOfCopy = timeOfCopy;
 		this.snippet = snippet;
 		
-		parsedText = snippet.getItemAt(0).coerceToText();
+		parsedText = (String) snippet.getItemAt(0).coerceToText(null); //TODO: Why does null work?
 	}
 	
 	public Date getTimeOfCopy()

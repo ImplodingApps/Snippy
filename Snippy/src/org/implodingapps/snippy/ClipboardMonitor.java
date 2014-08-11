@@ -2,7 +2,6 @@ package org.implodingapps.snippy;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -88,7 +87,7 @@ public class ClipboardMonitor extends Service
 			{
 				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
 				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
-				Log.i("Snippy", "" + Singleton.snippets.get(Singleton.snippets.size() - 1).coerceToText(getApplicationContext()));
+				Log.i("Snippy", "" + Singleton.snippets.get(Singleton.snippets.size() - 1).parsedText);
 			}
 		};
 		
