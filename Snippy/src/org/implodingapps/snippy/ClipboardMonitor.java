@@ -1,5 +1,8 @@
 package org.implodingapps.snippy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.Service;
@@ -15,6 +18,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
+import android.nfc.Tag;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -41,8 +45,23 @@ public class ClipboardMonitor extends Service
 	
 	final int NOTIF_ID = 1;
 	int triggerPosition;
+	String element;
 	
-	@Override
+	public ArrayList<Tag> createTags()
+	{
+		ArrayList<Tag> snippet_list = new ArrayList<Tag>();
+		for (int i = 0; i < Singleton.snippets.size(); i++)
+		{
+			element = Singleton.snippets.get(i).parsedText;
+			if (Singleton.snippets.get(i).parsedText.length() > 20)
+			{
+				element.substring(0, 17).concat("...");
+			}
+			snippet_list.add(new Tag(element, (int) (i / 3), i);
+		}
+		return snippet_list;
+	}
+	
 	public IBinder onBind(Intent arg0) 
 	{
 		// TODO Auto-generated method stub
