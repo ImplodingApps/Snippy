@@ -12,9 +12,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.net.Uri;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -101,7 +104,8 @@ public class TagCloudView extends RelativeLayout {
     		mTextView.get(i).setTextColor(mergedColor);
     		mTextView.get(i).setTextSize((int)(tempTag.getTextSize() * tempTag.getScale()));
     		addView(mTextView.get(i));
-    		mTextView.get(i).setOnClickListener(OnTagClickListener(tempTag.getUrl()));
+    		//mTextView.get(i).setOnClickListener(OnTagClickListener(tempTag.getUrl()));
+    		mTextView.get(i).setOnTouchListener(OnTagTouchedListener(tempTag.getIndex()));
     		i++;
     	}
 	}
@@ -142,7 +146,8 @@ public class TagCloudView extends RelativeLayout {
 		mTextView.get(i).setTextColor(mergedColor);
 		mTextView.get(i).setTextSize((int)(newTag.getTextSize() * newTag.getScale()));
 		addView(mTextView.get(i));
-		mTextView.get(i).setOnClickListener(OnTagClickListener(newTag.getUrl()));		
+//		mTextView.get(i).setOnClickListener(OnTagClickListener(newTag.getUrl()));	
+		mTextView.get(i).setOnTouchListener(OnTagTouchedListener(newTag.getIndex()));	
 	}
 	
 	public boolean Replace(Tag newTag, String oldTagText){
@@ -227,50 +232,51 @@ public class TagCloudView extends RelativeLayout {
 //		return true;
 //	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent e) {
-		float x = e.getX();
-		float y = e.getY();
-		
-		switch (e.getAction()) {
-		case MotionEvent.ACTION_MOVE:	
-			//rotate elements depending on how far the selection point is from center of cloud
-			float dx = x - centerX;
-			float dy = y - centerY;
-			mAngleX = ( dy/radius) *tspeed * TOUCH_SCALE_FACTOR;
-			mAngleY = (-dx/radius) *tspeed * TOUCH_SCALE_FACTOR;
-	    	
-			mTagCloud.setAngleX(mAngleX);
-	    	mTagCloud.setAngleY(mAngleY);
-	    	mTagCloud.update();
-	    	
-	    	Iterator it=mTagCloud.iterator();
-	    	Tag tempTag;
-	    	while (it.hasNext()){
-	    		tempTag= (Tag) it.next();              
-	    		mParams.get(tempTag.getParamNo()).setMargins(	
-						(int) (centerX -shiftLeft + tempTag.getLoc2DX()), 
-						(int) (centerY + tempTag.getLoc2DY()), 
-						0, 
-						0);
-				mTextView.get(tempTag.getParamNo()).setTextSize((int)(tempTag.getTextSize() * tempTag.getScale()));
-				int mergedColor = Color.argb( (int)	(tempTag.getAlpha() * 255), 
-						  (int)	(tempTag.getColorR() * 255), 
-						  (int)	(tempTag.getColorG() * 255), 
-						  (int) (tempTag.getColorB() * 255));
-				mTextView.get(tempTag.getParamNo()).setTextColor(mergedColor);
-				mTextView.get(tempTag.getParamNo()).bringToFront();
-	    	}
-			
-			break;
-		/*case MotionEvent.ACTION_UP:  //now it is clicked!!!!		
-			dx = x - centerX;
-			dy = y - centerY;			
-			break;*/
-		}
-		
-		return true;
-	}
+//	@Override
+//	public boolean onTouchEvent(MotionEvent e) {
+//		float x = e.getX();
+//		float y = e.getY();
+//		
+//		switch (e.getAction()) {
+//		case MotionEvent.ACTION_MOVE:	
+//			//rotate elements depending on how far the selection point is from center of cloud
+//			float dx = x - centerX;
+//			float dy = y - centerY;
+//			mAngleX = ( dy/radius) *tspeed * TOUCH_SCALE_FACTOR;
+//			mAngleY = (-dx/radius) *tspeed * TOUCH_SCALE_FACTOR;
+//	    	
+//			mTagCloud.setAngleX(mAngleX);
+//	    	mTagCloud.setAngleY(mAngleY);
+//	    	mTagCloud.update();
+//	    	
+//	    	Iterator it=mTagCloud.iterator();
+//	    	Tag tempTag;
+//	    	while (it.hasNext()){
+//	    		tempTag= (Tag) it.next();              
+//	    		mParams.get(tempTag.getParamNo()).setMargins(	
+//						(int) (centerX -shiftLeft + tempTag.getLoc2DX()), 
+//						(int) (centerY + tempTag.getLoc2DY()), 
+//						0, 
+//						0);
+//				mTextView.get(tempTag.getParamNo()).setTextSize((int)(tempTag.getTextSize() * tempTag.getScale()));
+//				int mergedColor = Color.argb( (int)	(tempTag.getAlpha() * 255), 
+//						  (int)	(tempTag.getColorR() * 255), 
+//						  (int)	(tempTag.getColorG() * 255), 
+//						  (int) (tempTag.getColorB() * 255));
+//				mTextView.get(tempTag.getParamNo()).setTextColor(mergedColor);
+//				mTextView.get(tempTag.getParamNo()).bringToFront();
+//	    	}
+//			
+//			break;
+//		/*case MotionEvent.ACTION_UP:  //now it is clicked!!!!		
+//			dx = x - centerX;
+//			dy = y - centerY;			
+//			break;*/
+//		}
+//		
+//		return true;
+//	}
+	
 	String urlMaker(String url){
 		if 	(	(url.substring(0,7).equalsIgnoreCase("http://")) 	|| 
 				(url.substring(0,8).equalsIgnoreCase("https://"))
@@ -309,14 +315,49 @@ public class TagCloudView extends RelativeLayout {
 	
 	//for handling the click on the tags
 	//onclick open the tag url in a new window. Back button will bring you back to TagCloud
-	View.OnClickListener OnTagClickListener(final String url){
-		return new View.OnClickListener(){
+//	View.OnClickListener OnTagClickListener(final String url){
+//		return new View.OnClickListener(){
+//			@Override
+//			public void onClick(View v) {
+//				//we now have url from main code
+//				Uri uri = Uri.parse( urlMaker(url) );
+//				//just open a new intent and set the content to search for the url
+//				mContext.startActivity(new Intent( Intent.ACTION_VIEW, uri ) );				
+//			}
+//		};
+//	}
+	
+	final boolean pointInView(float localX, float localY, View child) 
+	{
+		return localX >= 0 && localX < (child.getX()) && localY >= 0 && localY < (child.getY());
+	}
+	
+	public boolean dispatchTouchEventCustom(MotionEvent e)
+	{
+		for (int i=0; i<getChildCount(); i++) {
+	        TextView child= (TextView) getChildAt(i);
+	        if (pointInView(e.getX(), e.getY(), child)) {
+	            child.dispatchTouchEvent(e);
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	View.OnTouchListener OnTagTouchedListener(final int index)
+	{
+		return new View.OnTouchListener() {
 			@Override
-			public void onClick(View v) {
-				//we now have url from main code
-				Uri uri = Uri.parse( urlMaker(url) );
-				//just open a new intent and set the content to search for the url
-				mContext.startActivity(new Intent( Intent.ACTION_VIEW, uri ) );				
+			public boolean onTouch(View v, MotionEvent e) 
+			{
+				switch(e.getAction())
+				{
+					case MotionEvent.ACTION_UP: Log.i("Snippy", "Touch-up recieved!");
+												break;
+				}
+				Log.i("Snippy", "Something happened?");
+
+				return true;
 			}
 		};
 	}

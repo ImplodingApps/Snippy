@@ -1,6 +1,7 @@
 package org.implodingapps.snippy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -15,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.MonthDisplayHelper;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -35,20 +37,22 @@ public class ClipboardMonitor extends Service
 	private WindowManager.LayoutParams params;
 	
 	private TagCloudView mTagCloudView;
+	private WindowManager.LayoutParams tcparams;
+	private boolean interceptTouches = false;
 	
 	final int NOTIF_ID = 1;
 	int triggerPosition;
 	String element;
 	
-	public ArrayList<Tag> createTags()
+	public List<Tag> createTags()
 	{
-		ArrayList<Tag> snippet_list = new ArrayList<Tag>();
+		List<Tag> snippet_list = new ArrayList<Tag>();
 		for (int i = 0; i < Singleton.snippets.size(); i++)
 		{
 			element = Singleton.snippets.get(i).parsedText;
 			if (Singleton.snippets.get(i).parsedText.length() > 20)
 			{
-				element.substring(0, 17).concat("...");
+				element = element.substring(0, 17).concat("...");
 			}
 			snippet_list.add(new Tag(element, (int) (i / 3), i));
 		}
@@ -69,12 +73,10 @@ public class ClipboardMonitor extends Service
 		triggerPosition = 1;
 		
 		//Instantiate Variables
+		interceptTouches = false;
 		res = getResources();
 		clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-		
-		//Initialize Singleton
-		Singleton.getInstance();
 		
 		//Start a persistent notification
 		startOngoingNotification();
@@ -85,9 +87,9 @@ public class ClipboardMonitor extends Service
 			@Override
 			public void onPrimaryClipChanged() //This is a callback (if the clip is changed, this is called
 			{
-				/*DeBUG*/Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
+				/*DeBUG*///Log.d("Snippy", "New copypasta!" + clippy.getPrimaryClip());
 				Singleton.snippets.add(new Snippet(System.currentTimeMillis(), new ClipData(clippy.getPrimaryClip())));
-				/*DeBUG*/Log.i("Snippy", "" + Singleton.snippets.get(Singleton.snippets.size() - 1).parsedText);
+				/*DeBUG*///Log.i("Snippy", "" + Singleton.snippets.get(Singleton.snippets.size() - 1).parsedText);
 			}
 		};
 		
@@ -128,67 +130,111 @@ public class ClipboardMonitor extends Service
 		params.x = 0;
 		params.y = 0;
 		
-		trigger = new ImageView(this);
+		trigger = new ImageView(this)
+		{
+			@Override
+			public boolean dispatchTouchEvent(MotionEvent e)
+			{
+//				if(interceptTouches && e.getAction() != MotionEvent.ACTION_UP)
+//				{
+//					mTagCloudView.dispatchTouchEvent(e);
+//					return true;
+//				}
+//				if(interceptTouches && e.getAction() == MotionEvent.ACTION_UP)
+//				{
+//					mTagCloudView.dispatchTouchEvent(e);
+//					return trigger.onTouchEvent(e);
+//				}
+//				return trigger.onTouchEvent(e);
+				if(interceptTouches)
+					mTagCloudView.dispatchTouchEvent(e);
+				trigger.onTouchEvent(e);
+				return true;
+			}
+			
+			@Override
+			public boolean onTouchEvent(MotionEvent e)
+			{
+				switch (e.getAction()) 
+				{
+					case MotionEvent.ACTION_DOWN:	//trigger.setImageBitmap(createTriggerBitmap(5));
+												  	createWordCloud(true);
+												  	break;
+					case MotionEvent.ACTION_UP:	  	//Restore to normal UI
+												  	createWordCloud(false);
+												  	trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
+												  	break;
+					case MotionEvent.ACTION_CANCEL:	Log.i("Snippy", "We've been intercepted!!");
+					//windowManager.updateViewLayout(trigger, paramsF);
+					break;
+				}
+				return true;
+			}
+			
+		};
 		trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
 
-		
 		windowManager.addView(trigger, params);
 		
-		try {
-			trigger.setOnTouchListener(new View.OnTouchListener() {
-				private WindowManager.LayoutParams paramsF = params;
-				private int initialX;
-				private int initialY;
-				private float initialTouchX;
-				private float initialTouchY;
-
-				@Override public boolean onTouch(View v, MotionEvent event) {
-					switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN:
-
-						// Get current time in nano seconds.
-
-//						initialX = paramsF.x;
-//						initialY = paramsF.y;
-//						initialTouchX = event.getRawX();
-//						initialTouchY = event.getRawY();
-						
-						//trigger.setImageBitmap(createTriggerBitmap(5));
-						createWordCloud(true);
-						break;
-					case MotionEvent.ACTION_UP:
-						//Record the position the user released the screen
-						
-						
-						//Restore to normal UI
-						createWordCloud(false);
-						trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
-						break;
-					case MotionEvent.ACTION_MOVE:
-//						paramsF.x = initialX + (int) (event.getRawX() - initialTouchX);
-//						paramsF.y = initialY + (int) (event.getRawY() - initialTouchY);
-						windowManager.updateViewLayout(trigger, paramsF);
-						break;
-					}
-					return false;
-				}
-			});
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+//		try {
+//			trigger.setOnTouchListener(new View.OnTouchListener() {
+//				private WindowManager.LayoutParams paramsF = params;
+//				private int initialX;
+//				private int initialY;
+//				private float initialTouchX;
+//				private float initialTouchY;
+//
+//				@Override public boolean onTouch(View v, MotionEvent event) {
+//					switch (event.getAction()) {
+//					case MotionEvent.ACTION_DOWN:
+//
+//						// Get current time in nano seconds.
+//
+////						initialX = paramsF.x;
+////						initialY = paramsF.y;
+////						initialTouchX = event.getRawX();
+////						initialTouchY = event.getRawY();
+//						
+//						//trigger.setImageBitmap(createTriggerBitmap(5));
+//						createWordCloud(true);
+//						break;
+//					case MotionEvent.ACTION_UP:
+//						//Record the position the user released the screen
+//						
+//						
+//						//Restore to normal UI
+//						createWordCloud(false);
+//						trigger.setImageBitmap(createTriggerBitmap(triggerPosition));
+//						break;
+//					case MotionEvent.ACTION_MOVE:
+////						paramsF.x = initialX + (int) (event.getRawX() - initialTouchX);
+////						paramsF.y = initialY + (int) (event.getRawY() - initialTouchY);
+//						windowManager.updateViewLayout(trigger, paramsF);
+//						break;
+//					}
+//					return true;
+//				}
+//			});
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
 	}
 	
 	@SuppressWarnings("deprecation") //I don't care; don't talk to me.
-	public void createWordCloud(boolean add)
+	public View createWordCloud(boolean add)
 	{
 		if(add)
 		{
-			params = new WindowManager.LayoutParams(
+			tcparams = new WindowManager.LayoutParams(
 					WindowManager.LayoutParams.WRAP_CONTENT,
 					WindowManager.LayoutParams.WRAP_CONTENT,
 					WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,
-					WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+					WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_DIM_BEHIND,
 					PixelFormat.TRANSLUCENT);
+			tcparams.dimAmount = 0.95f;
+			params.gravity = Gravity.TOP | Gravity.LEFT;
+			params.x = 0;
+			params.y = 0;
 			
 			//Step0: to get a full-screen View:
 			//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -200,12 +246,17 @@ public class ClipboardMonitor extends Service
 			int width = display.getWidth();
 			int height = display.getHeight();
 					
+			//Log.i("Snippy", createTags() + "");
 			mTagCloudView = new TagCloudView(this, width, height, createTags() ); //passing current context
 			
-			windowManager.addView(mTagCloudView, params);
+			//return mTagCloudView;
+			windowManager.addView(mTagCloudView, tcparams);
+			interceptTouches = true;
 		}
 		
-		if(!add){ windowManager.removeView(mTagCloudView);}
+		if(!add){ windowManager.removeView(mTagCloudView); interceptTouches = false; }
+		
+		return null;
 	}
 	
 	public Bitmap createTriggerBitmap(int position)
@@ -224,7 +275,7 @@ public class ClipboardMonitor extends Service
 		if(position == 1 || position == 2)
 		{
 			params.y = 0;
-			resized = Bitmap.createScaledBitmap(original, statusBarHeight, statusBarHeight, true);
+			resized = Bitmap.createScaledBitmap(original, statusBarHeight * 2, statusBarHeight, true);
 		}
 		if(position == 3 || position == 4)
 		{
@@ -241,7 +292,7 @@ public class ClipboardMonitor extends Service
 		
 		//Bitmap resized = Bitmap.createScaledBitmap(original, statusBarHeight, statusBarHeight, true);
 		
-		Log.i("Snippy", statusBarHeight + "");
+		//Log.i("Snippy", statusBarHeight + "");
 		return resized;
 	}
 	
@@ -257,7 +308,7 @@ public class ClipboardMonitor extends Service
 	{
 		clippy.removePrimaryClipChangedListener(cclistener);
 		
-		/*DeBUG*/ Log.d("Snippy", "Dump: " + Singleton.snippets);
+		/*DeBUG*/ //Log.d("Snippy", "Dump: " + Singleton.snippets);
 		
 		if (trigger != null) windowManager.removeView(trigger);
 		
