@@ -352,10 +352,10 @@ public class TagCloudView extends RelativeLayout {
 			{
 				switch(e.getAction())
 				{
-					case MotionEvent.ACTION_UP: Log.i("Snippy", "Touch-up recieved!");
+					case MotionEvent.ACTION_UP: Log.i("Snippy", "Touch-up recieved! I'm: " + index);
 												break;
 				}
-				Log.i("Snippy", "Something happened?");
+				Log.i("Snippy", "Something happened?  I'm: " + index);
 
 				return true;
 			}

@@ -147,7 +147,7 @@ public class ClipboardMonitor extends Service
 //				}
 //				return trigger.onTouchEvent(e);
 				if(interceptTouches)
-					mTagCloudView.dispatchTouchEvent(e);
+					mTagCloudView.dispatchTouchEventCustom(e);
 				trigger.onTouchEvent(e);
 				return true;
 			}
