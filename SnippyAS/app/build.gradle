@@ -1,13 +1,29 @@
 apply plugin: 'com.android.application'
 
 android {
+<<<<<<< HEAD
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+=======
     compileSdkVersion 20
     buildToolsVersion "21.1.2"
+<<<<<<< Updated upstream
+=======
+>>>>>>> FETCH_HEAD
+>>>>>>> Stashed changes
 
     defaultConfig {
         applicationId "org.implodingapps.snippy"
         minSdkVersion 14
+<<<<<<< Updated upstream
         targetSdkVersion 21
+=======
+<<<<<<< HEAD
+        targetSdkVersion 22
+=======
+        targetSdkVersion 21
+>>>>>>> FETCH_HEAD
+>>>>>>> Stashed changes
     }
 
     buildTypes {

@@ -4,7 +4,15 @@ buildscript {
         jcenter()
     }
     dependencies {
+<<<<<<< Updated upstream
         classpath 'com.android.tools.build:gradle:1.0.0'
+=======
+<<<<<<< HEAD
+        classpath 'com.android.tools.build:gradle:1.2.3'
+=======
+        classpath 'com.android.tools.build:gradle:1.0.0'
+>>>>>>> FETCH_HEAD
+>>>>>>> Stashed changes
     }
 }
 
