@@ -37,3 +37,6 @@ proguard/
 
 #Android Studio files
 .idea/
+
+# Machine Specific IDE config file(s)
+SnippyAS/app/app.iml
