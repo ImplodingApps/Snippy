@@ -1,4 +1,4 @@
-https://travis-ci.org/ImplodingApps/Snippy.svg?branch=master
+[![Build Status](https://travis-ci.org/ImplodingApps/Snippy.svg)](https://travis-ci.org/ImplodingApps/Snippy)
 
 Snippy
 ======
