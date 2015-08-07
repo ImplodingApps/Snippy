@@ -36,4 +36,4 @@ deploy:
   file: "SnippyAS/app/build/outputs/apk/app-debug.apk"
   skip_cleanup: true
   on:
-    tags: true
+    tags: false
