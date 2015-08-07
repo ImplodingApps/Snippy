@@ -5,7 +5,6 @@ android:
   components:
     # Uncomment the lines below if you want to
     # use the latest revision of Android SDK Tools
-    - build-tools-22.2.1
     - android-22
     # - extra
 
@@ -17,9 +16,9 @@ android:
     - extra-android-support
 
     # Additional components
-    # - extra-google-google_play_services
-    # - extra-google-m2repository
-    # - extra-android-m2repository
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
     - addon-google_apis-google-22
 
     # Specify at least one system image,
