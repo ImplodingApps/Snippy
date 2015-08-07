@@ -27,4 +27,4 @@ android:
     # - sys-img-x86-android-17
 
 script:
-    - ./SnippyAS/gradlew build
+    - cd SnippyAS; ./gradlew build --info
