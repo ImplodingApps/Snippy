@@ -28,3 +28,12 @@ android:
 
 script:
     - cd SnippyAS; ./gradlew build --info
+
+
+deploy:
+  provider: releases
+  api_key: "3aac8fded87c65fde5cca651c9f05851998314a3"
+  file: "SnippyAS/app/build/outputs/apk/app-debug.apk"
+  skip_cleanup: true
+  on:
+    tags: true
