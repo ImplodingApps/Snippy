@@ -32,7 +32,7 @@ script:
 
 deploy:
   provider: releases
-  api_key: "3aac8fded87c65fde5cca651c9f05851998314a3"
+  api_key: "f9b469a1b0b7af90c671034ef0402b1814e20f23"
   file: "SnippyAS/app/build/outputs/apk/app-debug.apk"
   skip_cleanup: true
   on:
