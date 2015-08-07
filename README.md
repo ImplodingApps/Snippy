@@ -1,3 +1,5 @@
+https://travis-ci.org/ImplodingApps/Snippy.svg?branch=master
+
 Snippy
 ======
 
