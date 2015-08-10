@@ -27,7 +27,7 @@ android:
     # - sys-img-x86-android-17
 
 script:
-    - KEY_PW=$KEY_PW; KEYSTORE_PW=$KEYSTORE_PW; cd SnippyAS; ./gradlew build assembleTravis crashlyticsUploadDistributionTravis --info
+    - cd SnippyAS; ./gradle foo #./gradlew build assembleTravis crashlyticsUploadDistributionTravis --info
 
 
 deploy:

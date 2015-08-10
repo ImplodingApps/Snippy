@@ -51,3 +51,8 @@ dependencies {
         transitive = true;
     }
 }
+
+task foo << {
+    println System.getenv('KEY_PW')
+    println System.getenv('TRAVIS_BUILD_NUMBER')
+}
