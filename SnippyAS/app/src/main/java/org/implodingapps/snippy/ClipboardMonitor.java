@@ -70,7 +70,7 @@ public class ClipboardMonitor extends Service
 	public void onCreate() //Note: Will only ever be called once
 	{	
 		//TODO: Populate variables from settings 
-		triggerPosition = 1;
+		triggerPosition = 2;
 		
 		//Instantiate Variables
 		interceptTouches = false;

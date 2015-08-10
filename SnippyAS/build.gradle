@@ -2,14 +2,27 @@
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
 }
+//
+//productFlavors {
+//    dev {
+//        applicationId "implodingapps.snippy.dev"
+//    }
+//    product {
+//        applicationId "implodingapps.snippy"
+//    }
+//}

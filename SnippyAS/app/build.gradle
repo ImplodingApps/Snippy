@@ -1,9 +1,23 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
+    signingConfigs {
+        travisConfig {
+            keyAlias 'MyAndroidKey'
+            keyPassword "${KEY_PW}"        //Not System.env.KEY_PW, apparently
+            storeFile file('../keystore.jks')
+            storePassword "${KEYSTORE_PW}" //Not System.env.KEYSTORE_PW apparently
+        }
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword KEY_PW
+            storeFile file('../keystore.jks')
+            storePassword KEYSTORE_PW
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "org.implodingapps.snippy"
         minSdkVersion 14
@@ -15,10 +29,24 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            signingConfig signingConfigs.config
+        }
+        travis {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.travisConfig
+            ext.betaDistributionReleaseNotes='Test! Version NULL'
+            ext.betaDistributionGroupAliases='fake-testers'
         }
     }
 }
 
 dependencies {
     compile 'com.android.support:support-v4:22.0.+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
+        transitive = true;
+    }
 }

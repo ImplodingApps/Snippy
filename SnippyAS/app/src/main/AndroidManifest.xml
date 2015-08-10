@@ -32,6 +32,10 @@
         <service android:name="ClipboardMonitor"
             android:icon="@drawable/clippy">
         </service>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="38e5f67eec2d98e8018c7af1a89310c907891876" />
     </application>
     
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
