@@ -27,13 +27,13 @@ android:
     # - sys-img-x86-android-17
 
 script:
-    - cd SnippyAS; ./gradlew build --info
+    - cd SnippyAS; assembleTravis crashlyticsUploadDistributionTravis --info
 
 
 deploy:
   provider: releases
   api_key: $GithubKey
-  file: "SnippyAS/app/build/outputs/apk/app-debug.apk"
+  file: "SnippyAS/app/build/outputs/apk/app-travis.apk"
   skip_cleanup: true
   on:
     tags: false
