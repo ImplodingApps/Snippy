@@ -37,6 +37,7 @@ android {
         travis {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            versionCode System.getenv(TRAVIS_BUILD_NUMBER) as Integer ?: 9999
             signingConfig signingConfigs.travisConfig
             ext.betaDistributionReleaseNotes='Test! Version NULL'
             ext.betaDistributionGroupAliases='fake-testers'
