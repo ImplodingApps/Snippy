@@ -27,7 +27,7 @@ android:
     # - sys-img-x86-android-17
 
 script:
-    - echo $KEY_PW; exit; cd SnippyAS; ./gradlew build assembleTravis crashlyticsUploadDistributionTravis --info
+    - cd SnippyAS; ./gradlew build assembleTravis crashlyticsUploadDistributionTravis --info
 
 
 deploy:
