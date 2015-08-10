@@ -11,9 +11,9 @@ android {
         }
         config {
             keyAlias 'MyAndroidKey'
-            keyPassword KEY_PW ?: "null"
+            keyPassword project.hasProperty("KEY_PW") ? KEY_PW : "nop"
             storeFile file('../keystore.jks')
-            storePassword KEYSTORE_PW ?: "null"
+            storePassword project.hasProperty("KEYSTORE_PW") ? KEYSTORE_PW : "nop"
         }
     }
     compileSdkVersion 22
@@ -37,7 +37,7 @@ android {
         travis {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            versionCode System.getenv(TRAVIS_BUILD_NUMBER) as Integer ?: 9999
+            //versionCode "System.getenv('TRAVIS_BUILD_NUMBER')"// as Integer ?: 9999
             signingConfig signingConfigs.travisConfig
             ext.betaDistributionReleaseNotes='Test! Version NULL'
             ext.betaDistributionGroupAliases='fake-testers'
@@ -50,9 +50,4 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
         transitive = true;
     }
-}
-
-task foo << {
-    println System.getenv('KEY_PW')
-    println System.getenv('TRAVIS_BUILD_NUMBER')
 }
