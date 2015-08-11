@@ -51,3 +51,10 @@ dependencies {
         transitive = true;
     }
 }
+
+task foo << {
+    println "System.getenv('KEY_PW')"
+    println System.getenv('KEY_PW')
+    println ${KEY_PW}
+    println ${System.env.KEY_PW}
+}
