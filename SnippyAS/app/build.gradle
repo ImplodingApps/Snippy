@@ -8,7 +8,6 @@ android {
             keyPassword System.getenv('KEY_PW')//'123'//"$KEY_PW" //System.getenv(KEY_PW) //"${KEY_PW}" //Not System.env.KEY_PW, apparently
             storeFile file('../keystore.jks')
             storePassword System.getenv('KEYSTORE_PW')//'123'//"$KEYSTORE_PW" //System.getenv(KEYSTORE_PW) //"${KEYSTORE_PW}" //Not System.env.KEYSTORE_PW apparently
-            println System.getenv('KEYSTORE_PW')
         }
         config {
             keyAlias 'MyAndroidKey'
@@ -53,12 +52,12 @@ dependencies {
     }
 }
 
-task foo {
-    println "System.getenv('KEY_PW')"
-    println System.getenv('KEY_PW')
-//    println "${KEY_PW}"
-    println '${KEY_PW}'
-    println "${System.env.KEY_PW}"
-    println "------------------------------------"
-    println System.getenv('KEYSTORE_PW')
-}
+//task foo {
+//    println "System.getenv('KEY_PW')"
+//    println System.getenv('KEY_PW')
+////    println "${KEY_PW}"
+//    println '${KEY_PW}'
+//    println "${System.env.KEY_PW}"
+//    println "------------------------------------"
+//    println System.getenv('KEYSTORE_PW')
+//}
