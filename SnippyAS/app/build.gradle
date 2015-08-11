@@ -5,7 +5,7 @@ android {
     signingConfigs {
         travisConfig {
             keyAlias 'MyAndroidKey'
-            keyPassword "keykey" System.getenv('KEY_PW')//'123'//"$KEY_PW" //System.getenv(KEY_PW) //"${KEY_PW}" //Not System.env.KEY_PW, apparently
+            keyPassword "keykey" //System.getenv('KEY_PW')//'123'//"$KEY_PW" //System.getenv(KEY_PW) //"${KEY_PW}" //Not System.env.KEY_PW, apparently
             storeFile file('../keystore.jks')
             storePassword "password" //System.getenv('KEYSTORE_PW')//'123'//"$KEYSTORE_PW" //System.getenv(KEYSTORE_PW) //"${KEYSTORE_PW}" //Not System.env.KEYSTORE_PW apparently
         }
