@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
+def computeVersionNumber() {
+    return System.getenv('TRAVIS_BUILD_NUMBER') //as Integer ?: 9999
+}
+
 android {
     signingConfigs {
         travisConfig {
@@ -23,7 +27,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         
-        versionCode System.getenv('TRAVIS_BUILD_NUMBER') //as Integer ?: 9999
+        versionCode computeVersionNumber()
     }
 
     buildTypes {
