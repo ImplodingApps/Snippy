@@ -21,8 +21,9 @@ android {
     defaultConfig {
         applicationId "org.implodingapps.snippy"
         minSdkVersion 14
-
         targetSdkVersion 22
+        
+        versionCode "System.getenv('TRAVIS_BUILD_NUMBER')" as Integer ?: 9999
     }
 
     buildTypes {
